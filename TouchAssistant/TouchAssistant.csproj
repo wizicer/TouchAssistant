@@ -63,6 +63,14 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="KeyViewModel.autogen.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>KeyViewModel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="KeyViewModel.cs">
+      <Generator>HiddenCodeAutoGenerator</Generator>
+      <LastGenOutput>KeyViewModel.autogen.cs</LastGenOutput>
+    </Compile>
     <Compile Include="ViewModelBase.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>

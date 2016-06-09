@@ -8,6 +8,7 @@ namespace TouchAssistant
 {
     using System;
     using System.Collections.Generic;
+    using System.Collections.ObjectModel;
     using System.Linq;
     using System.Text;
     using System.Threading.Tasks;
@@ -15,28 +16,52 @@ namespace TouchAssistant
     internal partial class MainWindowViewModel 
     {
         /// <summary>
-        /// Field which backs the Name property
+        /// Field which backs the Keys property
         /// </summary>
-        private string _name = null;
+        private ObservableCollection<KeyViewModel> _keys = null;
         /// <summary>
-        /// Gets / sets the Name value
+        /// Gets / sets the Keys value
         /// </summary>
-        public string Name
+        public ObservableCollection<KeyViewModel> Keys
         {
-            get { return _name; }
+            get { return _keys; }
             set
             {
-                if (_name == value) return;
-                var old = _name;
-                _name = value;
-                OnNameChanged(old, value);
-                OnPropertyChanged("Name");
+                if (_keys == value) return;
+                var old = _keys;
+                _keys = value;
+                OnKeysChanged(old, value);
+                OnPropertyChanged("Keys");
             }
         }
     
         /// <summary>
-        /// Invoked when the value of Name changes
+        /// Invoked when the value of Keys changes
         /// </summary>
-        partial void OnNameChanged(string oldValue, string newValue);
+        partial void OnKeysChanged(ObservableCollection<KeyViewModel> oldValue, ObservableCollection<KeyViewModel> newValue);
+        /// <summary>
+        /// Field which backs the Title property
+        /// </summary>
+        private string _title = null;
+        /// <summary>
+        /// Gets / sets the Title value
+        /// </summary>
+        public string Title
+        {
+            get { return _title; }
+            set
+            {
+                if (_title == value) return;
+                var old = _title;
+                _title = value;
+                OnTitleChanged(old, value);
+                OnPropertyChanged("Title");
+            }
+        }
+    
+        /// <summary>
+        /// Invoked when the value of Title changes
+        /// </summary>
+        partial void OnTitleChanged(string oldValue, string newValue);
     }
 }

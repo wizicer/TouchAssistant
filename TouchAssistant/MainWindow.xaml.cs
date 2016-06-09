@@ -1,8 +1,12 @@
 ﻿namespace TouchAssistant
 {
     using System;
+    using System.Collections.Generic;
+    using System.Diagnostics;
     using System.Linq;
     using System.Runtime.InteropServices;
+    using System.Text;
+    using System.Text.RegularExpressions;
     using System.Windows;
     using System.Windows.Controls;
     using System.Windows.Input;
@@ -618,6 +622,8 @@
 
         private int fullHeight = 200;
 
+        private bool isActivated = false;
+
         public MainWindow()
         {
             InitializeComponent();
@@ -641,22 +647,27 @@
         private void Deactivation()
         {
             this.Opacity = 0.3;
+            this.isActivated = false;
         }
 
         private void Activation()
         {
-            this.Opacity = 0.8;
             this.lastActivation = DateTime.Now;
+            if (this.isActivated) return;
+            this.Opacity = 0.8;
             var dispatcherTimer = new System.Windows.Threading.DispatcherTimer();
             dispatcherTimer.Tick += (s, e) =>
             {
+                Debug.WriteLine("Tick");
                 if ((DateTime.Now - this.lastActivation).TotalSeconds > 2)
                 {
                     this.Deactivation();
                 }
+                dispatcherTimer.Stop();
             };
             dispatcherTimer.Interval = new TimeSpan(0, 0, 3);
             dispatcherTimer.Start();
+            this.isActivated = true;
         }
 
         private void Window_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -690,12 +701,31 @@
         }
         private void SwitchSize()
         {
-            this.Height = this.Height == minHeight ? fullHeight : minHeight;
+            //this.Height = this.Height == minHeight ? fullHeight : minHeight;
+            if (SizeToContent == SizeToContent.Height)
+            {
+                this.SizeToContent = SizeToContent.Manual;
+                this.Height = minHeight;
+            }
+            else
+            {
+                this.SizeToContent = SizeToContent.Height;
+                this.Height = double.NaN;
+            }
+            //this.Height = this.Height == double.NaN ? minHeight : double.NaN;
         }
 
         private void button_Click_1(object sender, RoutedEventArgs e)
         {
-            SendKeys.Send(VirtualKeys.Up);
+            var button = sender as Button;
+            var vm = button?.DataContext as KeyViewModel;
+            if (!vm?.Key.HasValue ?? false)
+            {
+                Debug.WriteLine("No value");
+                return;
+            }
+
+            SendKeys.Send(vm.Key.Value);
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
@@ -703,6 +733,24 @@
             this.fullHeight = (int)this.Height;
             this.SwitchSize();
             this.Activation();
+            this.model = DataGen.GetData();
+            this.viewModel = new MainWindowViewModel();
+            this.DataContext = this.viewModel;
+            this.StartSearchingWindow();
+        }
+
+        private void StartSearchingWindow()
+        {
+            var dispatcherTimer = new System.Windows.Threading.DispatcherTimer();
+            dispatcherTimer.Tick += (s, e) =>
+            {
+                var title = WindowHelper.GetActiveWindowTitle();
+                if (title == null) return;
+                var am = this.model.FirstOrDefault(_ => Regex.IsMatch(title, _.TitleMatchPattern));
+                this.viewModel.InitData(am);
+            };
+            dispatcherTimer.Interval = new TimeSpan(0, 0, 0, 0, 800);
+            dispatcherTimer.Start();
         }
 
         private void Window_PreviewMouseMove(object sender, MouseEventArgs e)
@@ -711,6 +759,58 @@
         }
 
         DateTime lastActivation = DateTime.Now;
+        ApplicationModel[] model;
+        MainWindowViewModel viewModel;
+    }
+
+    internal class WindowHelper
+    {
+        [DllImport("user32.dll")]
+        static extern IntPtr GetForegroundWindow();
+
+        [DllImport("user32.dll")]
+        static extern int GetWindowText(IntPtr hWnd, StringBuilder text, int count);
+
+        internal static string GetActiveWindowTitle()
+        {
+            const int nChars = 256;
+            StringBuilder Buff = new StringBuilder(nChars);
+            IntPtr handle = GetForegroundWindow();
+
+            if (GetWindowText(handle, Buff, nChars) > 0)
+            {
+                return Buff.ToString();
+            }
+            return null;
+        }
+    }
+
+    internal class DataGen
+    {
+        internal static ApplicationModel[] GetData()
+        {
+            var m = new List<ApplicationModel>();
+            var tckeys = new KeyModel[]
+            {
+                new KeyModel { FunctionName="Up", Key= VirtualKeys.Up },
+                new KeyModel { FunctionName="Down", Key= VirtualKeys.Down },
+            };
+            m.Add(new ApplicationModel { Name = "Total Commander", TitleMatchPattern = "Total Commander.*", Keys = tckeys });
+
+            return m.ToArray();
+        }
+    }
+
+    internal class ApplicationModel
+    {
+        public string Name { get; set; }
+        public string TitleMatchPattern { get; set; }
+        public KeyModel[] Keys { get; set; }
+    }
+    internal class KeyModel
+    {
+        public string FunctionName { get; set; }
+        public VirtualKeys Key { get; set; }
     }
 
     internal class SendKeys
