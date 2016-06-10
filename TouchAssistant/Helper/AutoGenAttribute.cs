@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace TouchAssistant
+﻿namespace TouchAssistant
 {
+    using System;
+    using System.Linq;
+
     [AttributeUsage(AttributeTargets.Class, Inherited = false, AllowMultiple = true)]
     public sealed class AutoGenAttribute : Attribute
     {

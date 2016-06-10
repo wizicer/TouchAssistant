@@ -1,7 +1,7 @@
-﻿using System.ComponentModel;
-
-namespace TouchAssistant
+﻿namespace TouchAssistant
 {
+    using System.ComponentModel;
+
     internal class ViewModelBase : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;

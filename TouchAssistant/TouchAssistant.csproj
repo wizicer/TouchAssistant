@@ -24,6 +24,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <CodeAnalysisRuleSet>TouchAssistant.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -33,6 +34,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <CodeAnalysisRuleSet>TouchAssistant.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="MaterialDesignColors, Version=1.1.2.0, Culture=neutral, processorArchitecture=MSIL">
@@ -63,15 +65,22 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="KeyViewModel.autogen.cs">
+    <Compile Include="Model\ApplicationModel.cs" />
+    <Compile Include="Helper\AutoGenAttribute.cs" />
+    <Compile Include="DataGen.cs" />
+    <Compile Include="Model\KeyModel.cs" />
+    <Compile Include="ViewModel\KeyViewModel.autogen.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>KeyViewModel.cs</DependentUpon>
     </Compile>
-    <Compile Include="KeyViewModel.cs">
+    <Compile Include="ViewModel\KeyViewModel.cs">
       <Generator>HiddenCodeAutoGenerator</Generator>
       <LastGenOutput>KeyViewModel.autogen.cs</LastGenOutput>
     </Compile>
-    <Compile Include="ViewModelBase.cs" />
+    <Compile Include="Helper\SendKeys.cs" />
+    <Compile Include="ViewModel\ViewModelBase.cs" />
+    <Compile Include="Helper\VirtualKeys.cs" />
+    <Compile Include="Helper\WindowHelper.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -80,12 +89,11 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="AutoGen.cs" />
-    <Compile Include="MainWindowViewModel.autogen.cs">
+    <Compile Include="ViewModel\MainWindowViewModel.autogen.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>MainWindowViewModel.cs</DependentUpon>
     </Compile>
-    <Compile Include="MainWindowViewModel.cs">
+    <Compile Include="ViewModel\MainWindowViewModel.cs">
       <Generator>HiddenCodeAutoGenerator</Generator>
       <LastGenOutput>MainWindowViewModel.autogen.cs</LastGenOutput>
     </Compile>
@@ -112,15 +120,23 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <None Include="packages.config" />
+    <None Include="packages.config">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
     <AppDesigner Include="Properties\" />
+    <None Include="TouchAssistant.ruleset" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Analyzer Include="..\packages\StyleCop.Analyzers.1.0.0\analyzers\dotnet\cs\Newtonsoft.Json.dll" />
+    <Analyzer Include="..\packages\StyleCop.Analyzers.1.0.0\analyzers\dotnet\cs\StyleCop.Analyzers.CodeFixes.dll" />
+    <Analyzer Include="..\packages\StyleCop.Analyzers.1.0.0\analyzers\dotnet\cs\StyleCop.Analyzers.dll" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

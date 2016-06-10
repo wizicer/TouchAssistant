@@ -1,4 +1,4 @@
-﻿// <AutoGen src="..\Common\AutoGen.cs" />
+﻿// <AutoGen src="..\..\Common\AutoGen.cs" />
 
 namespace TouchAssistant
 {
@@ -19,6 +19,7 @@ namespace TouchAssistant
             {
                 am = new ApplicationModel { Name = null, Keys = new KeyModel[] { } };
             }
+
             this.Title = am.Name;
             this.Keys = new ObservableCollection<KeyViewModel>(am.Keys.Select(_ => new KeyViewModel { Key = _.Key, Name = _.FunctionName }));
         }

@@ -1,4 +1,4 @@
-﻿// <AutoGen src="..\Common\AutoGen.cs" />
+﻿// <AutoGen src="..\..\Common\AutoGen.cs" />
 
 namespace TouchAssistant
 {
