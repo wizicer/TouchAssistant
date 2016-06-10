@@ -13,6 +13,7 @@
     /// </summary>
     public partial class MainWindow : Window
     {
+        private static object activationLockObject = new object();
         private Point startPoint;
 
         private int minHeight = 100;
@@ -23,7 +24,7 @@
 
         private DateTime lastActivation = DateTime.Now;
 
-        private ApplicationModel[] model;
+        private ProfileSchema[] model;
 
         private MainWindowViewModel viewModel;
 
@@ -40,29 +41,34 @@
 
         private void Deactivation()
         {
-            this.Opacity = 0.3;
-            this.isActivated = false;
+            lock (activationLockObject)
+            {
+                this.Opacity = 0.3;
+                this.isActivated = false;
+            }
         }
 
         private void Activation()
         {
-            this.lastActivation = DateTime.Now;
-            if (this.isActivated) return;
-            this.Opacity = 0.8;
-            var dispatcherTimer = new System.Windows.Threading.DispatcherTimer();
-            dispatcherTimer.Tick += (s, e) =>
+            lock (activationLockObject)
             {
-                Debug.WriteLine("Tick");
-                if ((DateTime.Now - this.lastActivation).TotalSeconds > 2)
+                this.lastActivation = DateTime.Now;
+                if (this.isActivated) return;
+                this.Opacity = 0.8;
+                var dispatcherTimer = new System.Windows.Threading.DispatcherTimer();
+                dispatcherTimer.Tick += (s, e) =>
                 {
-                    this.Deactivation();
-                }
-
-                dispatcherTimer.Stop();
-            };
-            dispatcherTimer.Interval = new TimeSpan(0, 0, 3);
-            dispatcherTimer.Start();
-            this.isActivated = true;
+                    Debug.WriteLine("Tick");
+                    if ((DateTime.Now - this.lastActivation).TotalSeconds > 2)
+                    {
+                        this.Deactivation();
+                        dispatcherTimer.Stop();
+                    }
+                };
+                dispatcherTimer.Interval = new TimeSpan(0, 0, 1);
+                dispatcherTimer.Start();
+                this.isActivated = true;
+            }
         }
 
         private void Window_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -113,7 +119,7 @@
         {
             var button = sender as Button;
             var vm = button?.DataContext as KeyViewModel;
-            if (!vm?.Key.HasValue ?? false)
+            if (!(vm?.Key.HasValue ?? false))
             {
                 Debug.WriteLine("No value");
                 return;
@@ -127,7 +133,7 @@
             this.fullHeight = (int)this.Height;
             this.SwitchSize();
             this.Activation();
-            this.model = DataGen.GetData();
+            this.model = DataService.GetData();
             this.viewModel = new MainWindowViewModel();
             this.DataContext = this.viewModel;
             this.StartSearchingWindow();
@@ -140,10 +146,10 @@
             {
                 var title = WindowHelper.GetActiveWindowTitle();
                 if (title == null) return;
-                var am = this.model.FirstOrDefault(_ => Regex.IsMatch(title, _.TitleMatchPattern));
+                var am = this.model.Where(_ => _.TitleMatchPattern != null).FirstOrDefault(_ => Regex.IsMatch(title, _.TitleMatchPattern));
                 this.viewModel.InitData(am);
             };
-            dispatcherTimer.Interval = new TimeSpan(0, 0, 0, 0, 800);
+            dispatcherTimer.Interval = new TimeSpan(0, 0, 0, 0, 200);
             dispatcherTimer.Start();
         }
 

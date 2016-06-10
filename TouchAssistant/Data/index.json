@@ -1,0 +1,29 @@
+﻿{
+    "ServerVersion": "1.0.0.0",
+    "Profiles": [
+        {
+            "Id": 2,
+            "Application": "Total Commander",
+            "Author": "xxx",
+            "UpdateDate": "2016-6-10",
+            "Rating": 4.65,
+            "Download": 2000
+        },
+        {
+            "Id": 3,
+            "Application": "Total Commander",
+            "Author": "xxxs",
+            "UpdateDate": "2016-6-11",
+            "Rating": 4.85,
+            "Download": 2400
+        },
+        {
+            "Id": 4,
+            "Application": "PotPlayer",
+            "Author": "xxxs",
+            "UpdateDate": "2016-6-8",
+            "Rating": 4.5,
+            "Download": 240
+        }
+    ]
+}

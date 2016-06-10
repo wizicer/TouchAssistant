@@ -1,0 +1,15 @@
+﻿{
+    "Application": "Total Commander",
+    "TitleMatchPattern": "Total Commander.*",
+    "Keys": [
+        {
+            "Name": "Up",
+            "key": "Up"
+        },
+        {
+            "Name": "Down",
+            "key": "Down"
+        }
+    ]
+
+}

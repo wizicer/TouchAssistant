@@ -13,15 +13,17 @@ namespace TouchAssistant
     [AutoGen("Title", typeof(string), null)]
     internal partial class MainWindowViewModel : ViewModelBase
     {
-        internal void InitData(ApplicationModel am)
+        internal void InitData(ProfileSchema am)
         {
             if (am == null)
             {
-                am = new ApplicationModel { Name = null, Keys = new KeyModel[] { } };
+                this.Title = null;
+                this.Keys = null;
+                return;
             }
 
-            this.Title = am.Name;
-            this.Keys = new ObservableCollection<KeyViewModel>(am.Keys.Select(_ => new KeyViewModel { Key = _.Key, Name = _.FunctionName }));
+            this.Title = am.Application;
+            this.Keys = new ObservableCollection<KeyViewModel>(am.Keys.Select(_ => new KeyViewModel { Key = _.Key, Name = _.Name }));
         }
     }
 }
